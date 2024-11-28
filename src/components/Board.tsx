@@ -6,9 +6,9 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverEvent
+  DragOverEvent,
 } from "@dnd-kit/core";
-import { arrayMove, rectSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import Column, { ColumnType } from "./Column";
 import { useState, useEffect } from "react";
 import { data } from "../utils/data";
@@ -69,7 +69,7 @@ export default function Board() {
           c.cards = [
             ...overItems.slice(0, newIndex()),
             activeItems[activeIndex],
-            ...overItems.slice(newIndex(), overItems.length)
+            ...overItems.slice(newIndex(), overItems.length),
           ];
           return c;
         } else {
@@ -94,15 +94,16 @@ export default function Board() {
       setColumns((prevState) => {
         return prevState.map((column) => {
           if (column.id === activeColumn.id) {
-            column.cards = column.id === overColumn.id
-              ? arrayMove(column.cards, activeIndex, overIndex)
-              : column.cards.filter((i) => i.id !== activeId);
+            column.cards =
+              column.id === overColumn.id
+                ? arrayMove(column.cards, activeIndex, overIndex)
+                : column.cards.filter((i) => i.id !== activeId);
           }
           if (column.id === overColumn.id && column.id !== activeColumn.id) {
             column.cards = [
               ...column.cards.slice(0, overIndex),
               activeColumn.cards[activeIndex],
-              ...column.cards.slice(overIndex)
+              ...column.cards.slice(overIndex),
             ];
           }
           return column;
@@ -126,7 +127,10 @@ export default function Board() {
     setColumns((prevState) =>
       prevState.map((column) =>
         column.id === columnId
-          ? { ...column, cards: column.cards.filter((card) => card.id !== cardId) }
+          ? {
+              ...column,
+              cards: column.cards.filter((card) => card.id !== cardId),
+            }
           : column
       )
     );
@@ -138,7 +142,7 @@ export default function Board() {
       const newColumn = {
         id: Date.now().toString(),
         title: newColumnTitle,
-        cards: []
+        cards: [],
       };
       setColumns((prevState) => [...prevState, newColumn]);
       setNewColumnTitle("");
@@ -146,16 +150,20 @@ export default function Board() {
   };
 
   const handleDeleteColumn = (columnId: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this column?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this column?"
+    );
     if (confirmed) {
-      setColumns((prevState) => prevState.filter((column) => column.id !== columnId));
+      setColumns((prevState) =>
+        prevState.filter((column) => column.id !== columnId)
+      );
     }
   };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
